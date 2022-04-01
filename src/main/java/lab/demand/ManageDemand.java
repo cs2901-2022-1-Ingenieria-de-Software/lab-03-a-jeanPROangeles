@@ -8,28 +8,33 @@ public class ManageDemand {
 
     public ManageDemand(Tax tax) {
         this.tax = tax;
-    }
-
-    public double calculateTotal(List<Order> orders){
-        // Calculate Taxes
+    }   
+    public double calculateTaxes(List<Order> orders) {
         double taxes = 0.0;
         for (Order order : orders) {
             double tax = this.tax.calculateTax(order.getCountry());
             taxes += tax;
         }
-
-        // Calculate Total
+        return taxes;
+    }
+    public double CalculateTotalTmp(List<Order> orders) {
         double quantities = 0.0;
         for (Order order : orders) {
             double temp = order.getQuantity();
             quantities += temp;
         }
-
+        return quantities;
+    }
+    public double ResultTotal(double quantities, double taxes) {
         return quantities * taxes;
     }
-
-    public double calculateTotalForWithAdditionalByCountry(List<Order> orders, double defaultAdditionalColombia, double defaultAdditionalPeru, double defaultAdditionalBrazil){
-        // Calculate additionals by country
+    public double calculateTotal(List<Order> orders){
+        double tmpTaxes = calculateTaxes(orders);
+        double tmpQuantities= CalculateTotalTmp(orders);
+        return ResultTotal(tmpQuantities, tmpTaxes);
+    }
+    
+    public double CalculateAdditionalByCountry(List<Order> orders, double defaultAdditionalColombia, double defaultAdditionalPeru, double defaultAdditionalBrazil) {
         double taxes = 0.0;
         for (Order order : orders) {
             String currCountry = order.getCountry();
@@ -41,15 +46,12 @@ public class ManageDemand {
                 taxes += defaultAdditionalColombia;
             }
         }
-
-        // Calculate Total
-        double quantities = 0.0;
-        for (Order order : orders) {
-            double temp = order.getQuantity();
-            quantities += temp;
-        }
-
-        return quantities * taxes;
+        return taxes;
     }
 
+    public double calculateTotalForWithAdditionalByCountry(List<Order> orders, double defaultAdditionalColombia, double defaultAdditionalPeru, double defaultAdditionalBrazil){
+        double tmp2Quantities= CalculateTotalTmp(orders);
+        double tmp2Taxes= CalculateAdditionalByCountry(orders, defaultAdditionalColombia, defaultAdditionalPeru, defaultAdditionalBrazil);
+        return ResultTotal(tmp2Quantities, tmp2Taxes);
+    }
 }
